@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="English Grammar in Use 5th Edition by Raymond Murphy — Interactive web reader with progress tracking, dark mode, and offline support.">
+  <meta name="theme-color" content="#2A7F6F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Grammar in Use">
+
+  <title>English Grammar in Use — Web Reader</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232A7F6F'/><text x='50' y='66' font-size='48' text-anchor='middle' fill='white' font-weight='bold' font-family='system-ui'>Gr</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ═══════ SPLASH SCREEN ═══════ -->
+  <div class="splash" id="splash">
+    <div class="splash__icon">Gr</div>
+    <h1 class="splash__title">English Grammar in Use</h1>
+    <p class="splash__subtitle">5th Edition — Raymond Murphy</p>
+    <div class="splash__loader">
+      <div class="splash__loader-fill"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ DASHBOARD VIEW ═══════ -->
+  <div class="dashboard" id="dashboard">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+      <a href="#" class="navbar__brand" id="nav-brand">
+        <div class="navbar__brand-icon">Gr</div>
+        <span class="navbar__title">Grammar in Use</span>
+      </a>
+
+      <div class="navbar__spacer"></div>
+
+      <!-- Search -->
+      <div class="navbar__search" id="search-container">
+        <svg class="navbar__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="navbar__search-input" id="search-input" placeholder="Search units..." autocomplete="off">
+        <div class="search-results" id="search-results"></div>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <!-- Sun icon (shown in dark mode) -->
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <!-- Moon icon (shown in light mode) -->
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+      <!-- Hero Card — filled by JS -->
+      <div id="hero-area"></div>
+
+      <!-- Stats Row -->
+      <div class="stats-row stagger" id="stats-row">
+        <div class="stat-card fade-in">
+          <div class="stat-card__value" id="stat-completed">0</div>
+          <div class="stat-card__label">Completed</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-card__value" id="stat-total">145</div>
+          <div class="stat-card__label">Units</div>
+        </div>
+        <div class="stat-card fade-in">
+          <div class="stat-card__value" id="stat-sections">19</div>
+          <div class="stat-card__label">Sections</div>
+        </div>
+      </div>
+
+      <!-- Sections List — filled by JS -->
+      <div id="sections-list"></div>
+
+      <!-- Extras -->
+      <div class="section-header" style="margin-top: var(--space-8);">
+        <h2 class="section-header__title">Additional Resources</h2>
+      </div>
+      <div class="extras-grid" id="extras-grid"></div>
+    </main>
+  </div>
+
+  <!-- ═══════ READER VIEW ═══════ -->
+  <div class="reader" id="reader">
+    <!-- Reader Navbar -->
+    <div class="reader__navbar">
+      <button class="reader__back-btn" id="reader-back" title="Back to dashboard" aria-label="Back to dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="reader__title-area">
+        <div class="reader__unit-num" id="reader-unit-num"></div>
+        <div class="reader__unit-title" id="reader-unit-title"></div>
+      </div>
+
+      <button class="reader__complete-btn" id="reader-complete-btn" title="Mark as completed" aria-label="Mark as completed">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Reader Content -->
+    <div class="reader__content" id="reader-content">
+      <!-- Tabs: Explanation / Exercises -->
+      <div class="reader__tabs" id="reader-tabs">
+        <button class="reader__tab active" data-tab="explanation" id="tab-explanation">Explanation</button>
+        <button class="reader__tab" data-tab="exercises" id="tab-exercises">Exercises</button>
+      </div>
+
+      <!-- Page Container -->
+      <div class="reader__page-container" id="page-container">
+        <img class="reader__page-img" id="page-img" alt="Unit page" loading="eager">
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="reader__bottom-bar">
+      <button class="reader__nav-btn" id="btn-prev-unit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Prev
+      </button>
+
+      <span class="reader__page-indicator" id="page-indicator"></span>
+
+      <button class="reader__nav-btn" id="btn-next-unit">
+        Next
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ EXTRA PAGES READER ═══════ -->
+  <div class="reader" id="extras-reader">
+    <div class="reader__navbar">
+      <button class="reader__back-btn" id="extras-reader-back" title="Back to dashboard" aria-label="Back to dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <div class="reader__title-area">
+        <div class="reader__unit-num" id="extras-reader-label">Additional</div>
+        <div class="reader__unit-title" id="extras-reader-title"></div>
+      </div>
+      <div style="width:36px;"></div>
+    </div>
+
+    <div class="reader__content" id="extras-reader-content">
+      <div class="reader__pages-list" id="extras-pages-list">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TOAST ═══════ -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

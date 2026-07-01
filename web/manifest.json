@@ -1,0 +1,20 @@
+{
+  "name": "English Grammar in Use — Web Reader",
+  "short_name": "Grammar in Use",
+  "description": "Interactive web reader for English Grammar in Use 5th Edition by Raymond Murphy. Study grammar units with progress tracking and offline support.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#2A7F6F",
+  "background_color": "#FAF7F2",
+  "categories": ["education", "books"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%232A7F6F'/><text x='256' y='340' font-size='240' text-anchor='middle' fill='white' font-weight='bold' font-family='system-ui'>Gr</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
