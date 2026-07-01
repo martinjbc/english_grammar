@@ -15,8 +15,8 @@ import json
 import os
 
 PDF_PATH = "English Grammar in Use 5th Ed - Raymond Murphy.pdf"
-OUTPUT_DIR = os.path.join("web", "pages")
-UNITS_JSON_PATH = os.path.join("web", "units.json")
+OUTPUT_DIR = "pages"
+UNITS_JSON_PATH = "units.json"
 
 # DPI 150 is a good balance: sharp enough for mobile/tablet, small file size
 DPI = 150

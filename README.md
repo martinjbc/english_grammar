@@ -19,7 +19,6 @@ Personal web-based reader for studying custom materials.
 
 ### On your PC
 ```bash
-cd web
 python -m http.server 8080
 ```
 Open http://localhost:8080
@@ -33,7 +32,6 @@ Open http://localhost:8080
 ## Structure
 
 ```
-web/
 ├── index.html      # Main app
 ├── styles.css      # Design system
 ├── app.js          # Application logic
