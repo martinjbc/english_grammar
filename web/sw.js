@@ -1,9 +1,9 @@
 /**
- * Service Worker — Grammar in Use Web Reader
+ * Service Worker — Study Reader
  * Caching strategy: Cache-first for static assets, network-first for page images
  */
 
-const CACHE_NAME = 'grammar-in-use-v1';
+const CACHE_NAME = 'study-reader-v1';
 const STATIC_ASSETS = [
   './',
   './index.html',

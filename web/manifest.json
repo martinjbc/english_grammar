@@ -1,7 +1,7 @@
 {
-  "name": "English Grammar in Use — Web Reader",
-  "short_name": "Grammar in Use",
-  "description": "Interactive web reader for English Grammar in Use 5th Edition by Raymond Murphy. Study grammar units with progress tracking and offline support.",
+  "name": "Personal Study Reader",
+  "short_name": "Study Reader",
+  "description": "Interactive study reader with progress tracking and offline support.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

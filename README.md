@@ -1,15 +1,15 @@
-# 📚 English Grammar in Use — Web Reader
+# 📚 Personal Study Reader
 
-Personal web-based reader for **English Grammar in Use 5th Edition** by Raymond Murphy.
+Personal web-based reader for studying custom materials.
 
-> ⚠️ **Private repository** — This is for personal study use only. The content belongs to Cambridge University Press and Raymond Murphy.
+> ⚠️ **Private repository** — This is for personal use only.
 
 ## Features
 
 - 📱 **Mobile-first** — Designed for reading on the go
 - 🌿 **Eye-friendly** — Warm cream/sepia tones that don't strain your eyes
 - 📊 **Progress tracking** — Never lose where you left off
-- 🔍 **Instant search** — Find any grammar topic quickly
+- 🔍 **Instant search** — Find any unit quickly
 - 👆 **Swipe navigation** — Swipe left/right between units
 - 🌙 **Dark mode** — Warm sepia night mode for low-light reading
 - 📶 **PWA / Offline** — Install as an app, read without internet
@@ -37,15 +37,13 @@ web/
 ├── index.html      # Main app
 ├── styles.css      # Design system
 ├── app.js          # Application logic
-├── units.json      # Book structure (19 sections, 145 units)
+├── units.json      # Study structure
 ├── manifest.json   # PWA config
 ├── sw.js           # Service worker (offline)
 └── pages/          # Page images (JPEG)
 ```
 
 ## Regenerating Images
-
-If you need to re-extract from the PDF:
 ```bash
 pip install pymupdf
 python extract_pdf.py
@@ -53,4 +51,4 @@ python extract_pdf.py
 
 ---
 
-*For personal study use only. All content © Cambridge University Press / Raymond Murphy.*
+*For personal use only.*

@@ -446,9 +446,9 @@ def generate_units_json(total_pages, texts):
     ]
 
     manifest = {
-        "title": "English Grammar in Use",
-        "subtitle": "5th Edition",
-        "author": "Raymond Murphy",
+        "title": "Personal Study Reader",
+        "subtitle": "Study Reference Guide",
+        "author": "Personal",
         "total_pages": total_pages,
         "total_units": 145,
         "sections": sections,

@@ -1,5 +1,5 @@
 /**
- * English Grammar in Use — Web Reader App
+ * Personal Study Reader App
  * Premium SPA with progress tracking, search, dark mode, and swipe navigation
  */
 
@@ -146,8 +146,8 @@
     heroArea.innerHTML = `
       <div class="hero-card fade-in" id="hero-start" data-unit="1">
         <div class="hero-card__label">Welcome</div>
-        <h2 class="hero-card__title">English Grammar in Use</h2>
-        <p class="hero-card__subtitle">5th Edition by Raymond Murphy — Start learning!</p>
+        <h2 class="hero-card__title">Study Reader</h2>
+        <p class="hero-card__subtitle">Personal Reference Guide — Start learning!</p>
         <div class="hero-card__progress-bar">
           <div class="hero-card__progress-fill" style="width: 0%"></div>
         </div>
