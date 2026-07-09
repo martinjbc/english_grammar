@@ -309,12 +309,14 @@
     state.lastTab = tabName;
     saveState();
 
+    const pageImg = $('#page-img');
+    if (pageImg) pageImg.classList.remove('zoomed');
+
     // Update tab buttons
     $$('.reader__tab').forEach(t => t.classList.remove('active'));
     $(`[data-tab="${tabName}"]`).classList.add('active');
 
     // Show page image
-    const pageImg = $('#page-img');
     const pageIdx = tabName === 'explanation' ? 0 : 1;
     const imgPath = unit.page_images[pageIdx];
 
@@ -375,6 +377,7 @@
     reader.classList.remove('active');
     extrasReader.classList.remove('active');
     dashboard.classList.remove('hidden');
+    reader.classList.remove('hide-controls');
     window.scrollTo(0, 0);
     renderDashboard();
   }
@@ -491,6 +494,10 @@
       if (!isSwiping) return;
       isSwiping = false;
 
+      // Ignore swipes if image is zoomed to allow panning
+      const pageImg = $('#page-img');
+      if (pageImg && pageImg.classList.contains('zoomed')) return;
+
       const endX = e.changedTouches[0].clientX;
       const endY = e.changedTouches[0].clientY;
       const diffX = endX - startX;
@@ -499,12 +506,104 @@
       // Only trigger if horizontal swipe is dominant and significant
       if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
         if (diffX > 0) {
-          navigateUnit(-1); // swipe right = previous
+          // Swipe Right (Go back / Prev page)
+          if (state.lastTab === 'exercises') {
+            showTab('explanation');
+          } else {
+            const idx = allUnits.findIndex(u => u.id === state.lastUnit);
+            if (idx > 0) {
+              state.lastTab = 'exercises';
+              openUnit(allUnits[idx - 1].id);
+            }
+          }
         } else {
-          navigateUnit(1);  // swipe left = next
+          // Swipe Left (Go forward / Next page)
+          if (state.lastTab === 'explanation') {
+            showTab('exercises');
+          } else {
+            const idx = allUnits.findIndex(u => u.id === state.lastUnit);
+            if (idx < allUnits.length - 1) {
+              state.lastTab = 'explanation';
+              openUnit(allUnits[idx + 1].id);
+            }
+          }
         }
       }
     }, { passive: true });
+  }
+
+  // ── Double-Tap / Double-Click to Zoom ──
+  function initZoom() {
+    const pageImg = $('#page-img');
+    if (!pageImg) return;
+
+    // Double click (desktop)
+    pageImg.addEventListener('dblclick', () => {
+      pageImg.classList.toggle('zoomed');
+    });
+
+    // Double tap (mobile)
+    let lastTap = 0;
+    pageImg.addEventListener('touchend', (e) => {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      if (tapLength < 300 && tapLength > 0) {
+        pageImg.classList.toggle('zoomed');
+        e.preventDefault();
+      }
+      lastTap = currentTime;
+    });
+  }
+
+  // ── Auto-hide Toolbars on Scroll ──
+  function initScrollControls() {
+    let lastScrollY = window.scrollY;
+    let isControlsHidden = false;
+
+    window.addEventListener('scroll', () => {
+      if (!reader.classList.contains('active')) return;
+
+      const currentScrollY = window.scrollY;
+      const scrollDifference = currentScrollY - lastScrollY;
+
+      // Only trigger if scroll is significant to avoid jitter
+      if (Math.abs(scrollDifference) > 15) {
+        if (scrollDifference > 0 && currentScrollY > 100) {
+          // Scroll down: hide controls
+          if (!isControlsHidden) {
+            reader.classList.add('hide-controls');
+            isControlsHidden = true;
+          }
+        } else if (scrollDifference < -15) {
+          // Scroll up: show controls
+          if (isControlsHidden) {
+            reader.classList.remove('hide-controls');
+            isControlsHidden = false;
+          }
+        }
+      }
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+
+    // Tap/click on container to toggle controls when hidden
+    const pageContainer = $('#page-container');
+    pageContainer.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      
+      const pageImg = $('#page-img');
+      if (pageImg && pageImg.classList.contains('zoomed')) return; // Ignore if zoomed to avoid conflict with panning
+
+      if (isControlsHidden) {
+        reader.classList.remove('hide-controls');
+        isControlsHidden = false;
+      } else {
+        // Only hide if we have scrolled down a bit
+        if (window.scrollY > 50) {
+          reader.classList.add('hide-controls');
+          isControlsHidden = true;
+        }
+      }
+    });
   }
 
   // ── Keyboard Shortcuts ──
@@ -604,6 +703,8 @@
       renderDashboard();
       initSearch();
       initSwipe();
+      initZoom();
+      initScrollControls();
       initKeyboard();
       bindEvents();
       hideSplash();

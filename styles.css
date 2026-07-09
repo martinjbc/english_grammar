@@ -832,6 +832,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 var(--space-3);
   gap: var(--space-2);
   z-index: var(--z-fixed);
+  transition: transform var(--transition-base);
 }
 
 .reader__back-btn {
@@ -943,6 +944,7 @@ h1, h2, h3, h4, h5, h6 {
   position: sticky;
   top: var(--navbar-height);
   z-index: var(--z-sticky);
+  transition: transform var(--transition-base);
 }
 
 .reader__tab {
@@ -976,6 +978,9 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   align-items: flex-start;
   min-height: calc(100dvh - var(--navbar-height) - var(--bottom-bar-height) - 50px);
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .reader__page-img {
@@ -984,9 +989,16 @@ h1, h2, h3, h4, h5, h6 {
   height: auto;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  transition: opacity var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), max-width var(--transition-base);
   user-select: none;
   -webkit-user-drag: none;
+  cursor: zoom-in;
+}
+
+.reader__page-img.zoomed {
+  max-width: 150%;
+  width: 150%;
+  cursor: zoom-out;
 }
 
 .reader__page-img.loading {
@@ -1009,6 +1021,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   padding: 0 var(--space-4);
   z-index: var(--z-fixed);
+  transition: transform var(--transition-base);
 }
 
 .reader__nav-btn {
@@ -1345,36 +1358,56 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--shadow-md);
   }
 
-  /* Relocate tabs to bottom bar */
+  /* Premium Segmented Control for mobile tabs */
   .reader__tabs {
     position: fixed;
     top: auto;
-    bottom: 0;
-    left: 52px;
-    right: 52px;
-    height: var(--bottom-bar-height);
-    background: transparent;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.06);
     border-bottom: none;
-    padding: 0;
+    padding: 2px;
     margin: 0;
     z-index: calc(var(--z-fixed) + 1);
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
+    gap: 2px;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition-base);
+  }
+
+  [data-theme="dark"] .reader__tabs {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .reader__tab {
     flex: 1;
-    padding: 0 var(--space-2);
     height: 32px;
     font-size: 0.75rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    background: transparent;
+    padding: 0 var(--space-1);
+  }
+
+  .reader__tab.active {
+    background: var(--bg-card);
+    color: var(--primary-500);
+    box-shadow: var(--shadow-sm);
   }
 
   /* Compact bottom bar layout */
@@ -1395,5 +1428,18 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
     width: 20px;
     height: 20px;
+  }
+
+  /* Hide Toolbar Controls when scrolling down */
+  .reader.hide-controls .reader__navbar {
+    transform: translateY(-100%);
+  }
+
+  .reader.hide-controls .reader__bottom-bar {
+    transform: translateY(100%);
+  }
+
+  .reader.hide-controls .reader__tabs {
+    transform: translate(-50%, 150%);
   }
 }
