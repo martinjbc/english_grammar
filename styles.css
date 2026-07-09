@@ -1326,6 +1326,62 @@ h1, h2, h3, h4, h5, h6 {
   display: none !important;
 }
 
+/* Reader Zoom Widget */
+.reader__zoom-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 80px;
+  height: 32px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--space-2);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-fixed);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.zoom-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.zoom-btn:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+}
+
+.zoom-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.zoom-btn svg {
+  stroke-width: 2.5;
+}
+
+.zoom-level {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 38px;
+  text-align: center;
+  user-select: none;
+}
+
 /* ── Mobile Reader View Optimizations ── */
 @media (max-width: 767px) {
   :root {
@@ -1464,5 +1520,15 @@ h1, h2, h3, h4, h5, h6 {
 
   .reader.hide-controls .reader__tabs {
     transform: translate(-50%, 150%);
+  }
+
+  .reader__zoom-widget {
+    right: 12px;
+    bottom: 52px;
+  }
+
+  .reader.hide-controls .reader__zoom-widget {
+    transform: translateY(120px);
+    opacity: 0;
   }
 }

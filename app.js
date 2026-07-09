@@ -309,8 +309,7 @@
     state.lastTab = tabName;
     saveState();
 
-    const pageImg = $('#page-img');
-    if (pageImg) pageImg.classList.remove('zoomed');
+    setZoom(100);
 
     // Update tab buttons
     $$('.reader__tab').forEach(t => t.classList.remove('active'));
@@ -532,6 +531,37 @@
     }, { passive: true });
   }
 
+  // ── Step Zoom Functionality ──
+  let currentZoom = 100; // 100, 125, 150, 175, 200
+
+  function setZoom(level) {
+    currentZoom = Math.max(100, Math.min(200, level));
+    
+    // Update image scale
+    const pageImg = $('#page-img');
+    if (pageImg) {
+      if (currentZoom === 100) {
+        pageImg.classList.remove('zoomed');
+        pageImg.style.width = '';
+        pageImg.style.maxWidth = '';
+      } else {
+        pageImg.classList.add('zoomed');
+        pageImg.style.width = `${currentZoom}%`;
+        pageImg.style.maxWidth = 'none';
+      }
+    }
+
+    // Update zoom label
+    const label = $('#zoom-level-text');
+    if (label) label.textContent = `${currentZoom}%`;
+
+    // Update buttons disabled state
+    const btnIn = $('#btn-zoom-in');
+    const btnOut = $('#btn-zoom-out');
+    if (btnIn) btnIn.disabled = currentZoom >= 200;
+    if (btnOut) btnOut.disabled = currentZoom <= 100;
+  }
+
   // ── Double-Tap / Double-Click to Zoom ──
   function initZoom() {
     const pageImg = $('#page-img');
@@ -539,7 +569,7 @@
 
     // Double click (desktop)
     pageImg.addEventListener('dblclick', () => {
-      pageImg.classList.toggle('zoomed');
+      setZoom(currentZoom === 100 ? 150 : 100);
     });
 
     // Double tap (mobile)
@@ -548,11 +578,21 @@
       const currentTime = new Date().getTime();
       const tapLength = currentTime - lastTap;
       if (tapLength < 300 && tapLength > 0) {
-        pageImg.classList.toggle('zoomed');
+        setZoom(currentZoom === 100 ? 150 : 100);
         e.preventDefault();
       }
       lastTap = currentTime;
     });
+
+    // Step Zoom Buttons
+    const btnIn = $('#btn-zoom-in');
+    const btnOut = $('#btn-zoom-out');
+    if (btnIn) {
+      btnIn.addEventListener('click', () => setZoom(currentZoom + 25));
+    }
+    if (btnOut) {
+      btnOut.addEventListener('click', () => setZoom(currentZoom - 25));
+    }
   }
 
   // ── Auto-hide Toolbars on Scroll ──
