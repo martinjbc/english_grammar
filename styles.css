@@ -1329,8 +1329,8 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Mobile Reader View Optimizations ── */
 @media (max-width: 767px) {
   :root {
-    --navbar-height: 48px;
-    --bottom-bar-height: 48px;
+    --navbar-height: 40px;
+    --bottom-bar-height: 40px;
   }
 
   .reader__navbar {
@@ -1340,12 +1340,35 @@ h1, h2, h3, h4, h5, h6 {
 
   .reader__back-btn,
   .reader__complete-btn {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .reader__back-btn svg,
+  .reader__complete-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Inline layout for header details to save vertical space */
+  .reader__title-area {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .reader__header-meta {
+    margin-bottom: 0;
+    flex-shrink: 0;
   }
 
   .reader__unit-title {
     font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .reader__page-container {
@@ -1358,15 +1381,15 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--shadow-md);
   }
 
-  /* Premium Segmented Control for mobile tabs */
+  /* Compact Segmented Control for mobile tabs */
   .reader__tabs {
     position: fixed;
     top: auto;
-    bottom: 6px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 36px;
+    width: 180px;
+    height: 30px;
     background: rgba(0, 0, 0, 0.06);
     border-bottom: none;
     padding: 2px;
@@ -1389,8 +1412,8 @@ h1, h2, h3, h4, h5, h6 {
 
   .reader__tab {
     flex: 1;
-    height: 32px;
-    font-size: 0.75rem;
+    height: 26px;
+    font-size: 0.7rem;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -1416,9 +1439,9 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .reader__nav-btn {
-    min-width: 36px;
-    width: 36px;
-    height: 36px;
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
     padding: 0;
     border-radius: var(--radius-full);
     font-size: 0; /* Hide text "Prev" / "Next" */
@@ -1426,8 +1449,8 @@ h1, h2, h3, h4, h5, h6 {
 
   .reader__nav-btn svg {
     margin: 0;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
   }
 
   /* Hide Toolbar Controls when scrolling down */
