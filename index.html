@@ -138,7 +138,10 @@
 
       <!-- Page Container -->
       <div class="reader__page-container" id="page-container">
-        <img class="reader__page-img" id="page-img" alt="Unit page" loading="eager">
+        <div class="reader__page-wrapper" style="position: relative; display: inline-block; max-width: 700px; width: 100%;">
+          <img class="reader__page-img" id="page-img" alt="Unit page" loading="eager">
+          <div class="reader__word-overlay" id="reader-word-overlay"></div>
+        </div>
       </div>
     </div>
 
@@ -194,6 +197,35 @@
     <div class="reader__content" id="extras-reader-content">
       <div class="reader__pages-list" id="extras-pages-list">
         <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TRANSLATION POPOVER ═══════ -->
+  <div class="popover" id="translation-popover" style="display: none;">
+    <div class="popover__arrow"></div>
+    <div class="popover__header">
+      <span class="popover__word" id="popover-original-word">Word</span>
+      <button class="popover__close" id="btn-close-popover" title="Close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="popover__content">
+      <div class="popover__actions">
+        <button class="popover__btn" id="btn-pronounce" title="Listen pronunciation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-right:4px;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          Listen
+        </button>
+      </div>
+      <div class="popover__translation-area">
+        <div class="popover__translation-label">Español:</div>
+        <div class="popover__translation-text" id="popover-translation-text">Loading...</div>
       </div>
     </div>
   </div>

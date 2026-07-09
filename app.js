@@ -330,6 +330,10 @@
       pageImg.src = imgPath;
       pageImg.alt = `Unit ${unit.id} - ${tabName === 'explanation' ? 'Explanation' : 'Exercises'}`;
     }
+
+    // Load words overlay
+    const pageNum = unit.pages[pageIdx];
+    loadWordOverlay(pageNum);
   }
 
   function updateCompleteButton(unitId) {
@@ -380,6 +384,7 @@
     extrasReader.classList.remove('active');
     dashboard.classList.remove('hidden');
     reader.classList.remove('hide-controls');
+    hidePopover();
     window.scrollTo(0, 0);
     renderDashboard();
   }
@@ -539,6 +544,7 @@
 
   function setZoom(level) {
     currentZoom = Math.max(100, Math.min(200, level));
+    hidePopover();
     
     // Update image scale
     const pageImg = $('#page-img');
@@ -563,6 +569,155 @@
     const btnOut = $('#btn-zoom-out');
     if (btnIn) btnIn.disabled = currentZoom >= 200;
     if (btnOut) btnOut.disabled = currentZoom <= 100;
+  }
+
+  // ── Word Overlay, Pronunciation and Translation ──
+  let ocrCache = {};
+  let activeTranslationController = null;
+
+  async function loadWordOverlay(pageNum) {
+    const overlay = $('#reader-word-overlay');
+    if (!overlay) return;
+    overlay.innerHTML = '';
+    
+    hidePopover();
+
+    if (pageNum < 14 || pageNum > 303) return;
+
+    try {
+      let words = ocrCache[pageNum];
+      if (!words) {
+        const res = await fetch(`pages/words/page_${String(pageNum).padStart(3, '0')}.json`);
+        if (!res.ok) throw new Error('Failed to fetch words JSON');
+        words = await res.json();
+        ocrCache[pageNum] = words;
+      }
+
+      const fragment = document.createDocumentFragment();
+      words.forEach(([wordText, x0, y0, x1, y1]) => {
+        const wordEl = document.createElement('span');
+        wordEl.className = 'overlay-word';
+        wordEl.style.left = `${x0 * 100}%`;
+        wordEl.style.top = `${y0 * 100}%`;
+        wordEl.style.width = `${(x1 - x0) * 100}%`;
+        wordEl.style.height = `${(y1 - y0) * 100}%`;
+        
+        const cleanWord = wordText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'’“”]/g, "").trim();
+        wordEl.dataset.word = cleanWord;
+
+        wordEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showTranslationPopover(wordEl, cleanWord);
+        });
+
+        fragment.appendChild(wordEl);
+      });
+      overlay.appendChild(fragment);
+    } catch (err) {
+      console.warn(`No word overlay for page ${pageNum}:`, err);
+    }
+  }
+
+  function showTranslationPopover(wordEl, word) {
+    const popover = $('#translation-popover');
+    if (!popover) return;
+
+    const originalWordText = $('#popover-original-word');
+    const translationText = $('#popover-translation-text');
+    const btnPronounce = $('#btn-pronounce');
+
+    if (originalWordText) originalWordText.textContent = word;
+    if (translationText) translationText.textContent = 'Translating...';
+
+    popover.style.display = 'block';
+
+    const rect = wordEl.getBoundingClientRect();
+    const popoverWidth = popover.offsetWidth;
+    const popoverHeight = popover.offsetHeight;
+
+    let left = rect.left + rect.width / 2 - popoverWidth / 2;
+    let top = rect.top + window.scrollY - popoverHeight - 8;
+
+    left = Math.max(8, Math.min(window.innerWidth - popoverWidth - 8, left));
+
+    if (rect.top - popoverHeight - 8 < 0) {
+      top = rect.bottom + window.scrollY + 8;
+      popover.classList.add('popover--below');
+    } else {
+      popover.classList.remove('popover--below');
+    }
+
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+
+    btnPronounce.onclick = (e) => {
+      e.stopPropagation();
+      pronounceWord(word);
+    };
+
+    translateWord(word, translationText);
+  }
+
+  function hidePopover() {
+    const popover = $('#translation-popover');
+    if (popover) popover.style.display = 'none';
+    if (activeTranslationController) {
+      activeTranslationController.abort();
+      activeTranslationController = null;
+    }
+  }
+
+  function pronounceWord(word) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.lang = 'en-US';
+      
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Siri')));
+      if (engVoice) utterance.voice = engVoice;
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
+      showToast('Pronunciation not supported');
+    }
+  }
+
+  async function translateWord(word, targetEl) {
+    if (activeTranslationController) {
+      activeTranslationController.abort();
+    }
+    activeTranslationController = new AbortController();
+
+    const query = encodeURIComponent(word.toLowerCase());
+    const url = `https://api.mymemory.translated.net/get?q=${query}&langpair=en|es`;
+
+    try {
+      const res = await fetch(url, { signal: activeTranslationController.signal });
+      if (!res.ok) throw new Error('API response error');
+      const data = await res.json();
+      
+      if (data && data.responseData && data.responseData.translatedText) {
+        let translatedText = data.responseData.translatedText;
+        if (translatedText.toLowerCase() === word.toLowerCase()) {
+          targetEl.textContent = "Word not found";
+        } else {
+          if (word[0] === word[0].toUpperCase()) {
+            translatedText = translatedText[0].toUpperCase() + translatedText.slice(1);
+          }
+          targetEl.textContent = translatedText;
+        }
+      } else {
+        targetEl.textContent = 'Translation not found';
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.warn('Translation error:', err);
+        targetEl.textContent = 'Connection error';
+      }
+    } finally {
+      activeTranslationController = null;
+    }
   }
 
   // ── Double-Tap / Double-Click to Zoom ──
@@ -717,6 +872,25 @@
       e.preventDefault();
       goBackToDashboard();
     });
+
+    // Close popover on cross click
+    const closePopoverBtn = $('#btn-close-popover');
+    if (closePopoverBtn) {
+      closePopoverBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hidePopover();
+      });
+    }
+
+    // Close popover if clicking anywhere else
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#translation-popover') && !e.target.closest('.overlay-word')) {
+        hidePopover();
+      }
+    });
+
+    // Close popover on scroll
+    window.addEventListener('scroll', hidePopover, { passive: true });
   }
 
   // ── Splash Screen ──
