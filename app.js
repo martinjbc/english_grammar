@@ -316,17 +316,20 @@
     $(`[data-tab="${tabName}"]`).classList.add('active');
 
     // Show page image
+    const pageImg = $('#page-img');
     const pageIdx = tabName === 'explanation' ? 0 : 1;
     const imgPath = unit.page_images[pageIdx];
 
-    pageImg.classList.add('loading');
-    pageImg.onload = () => pageImg.classList.remove('loading');
-    pageImg.onerror = () => {
-      pageImg.classList.remove('loading');
-      pageImg.alt = 'Page not available';
-    };
-    pageImg.src = imgPath;
-    pageImg.alt = `Unit ${unit.id} - ${tabName === 'explanation' ? 'Explanation' : 'Exercises'}`;
+    if (pageImg) {
+      pageImg.classList.add('loading');
+      pageImg.onload = () => pageImg.classList.remove('loading');
+      pageImg.onerror = () => {
+        pageImg.classList.remove('loading');
+        pageImg.alt = 'Page not available';
+      };
+      pageImg.src = imgPath;
+      pageImg.alt = `Unit ${unit.id} - ${tabName === 'explanation' ? 'Explanation' : 'Exercises'}`;
+    }
   }
 
   function updateCompleteButton(unitId) {
