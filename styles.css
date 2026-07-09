@@ -864,6 +864,20 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
+.reader__header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-bottom: 2px;
+}
+
+.reader__separator {
+  color: var(--text-tertiary);
+  font-size: 0.625rem;
+  opacity: 0.4;
+}
+
 .reader__unit-num {
   font-size: 0.625rem;
   text-transform: uppercase;
@@ -1035,9 +1049,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .reader__page-indicator {
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   color: var(--text-tertiary);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* ── Extra Pages Reader ── */
@@ -1295,4 +1311,89 @@ h1, h2, h3, h4, h5, h6 {
 
 .dashboard.hidden {
   display: none !important;
+}
+
+/* ── Mobile Reader View Optimizations ── */
+@media (max-width: 767px) {
+  :root {
+    --navbar-height: 48px;
+    --bottom-bar-height: 48px;
+  }
+
+  .reader__navbar {
+    padding: 0 var(--space-2);
+    gap: var(--space-1);
+  }
+
+  .reader__back-btn,
+  .reader__complete-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .reader__unit-title {
+    font-size: 0.75rem;
+  }
+
+  .reader__page-container {
+    padding: var(--space-1);
+    min-height: calc(100dvh - var(--navbar-height) - var(--bottom-bar-height));
+  }
+
+  .reader__page-img {
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Relocate tabs to bottom bar */
+  .reader__tabs {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 52px;
+    right: 52px;
+    height: var(--bottom-bar-height);
+    background: transparent;
+    border-bottom: none;
+    padding: 0;
+    margin: 0;
+    z-index: calc(var(--z-fixed) + 1);
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .reader__tab {
+    flex: 1;
+    padding: 0 var(--space-2);
+    height: 32px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: var(--radius-md);
+  }
+
+  /* Compact bottom bar layout */
+  .reader__bottom-bar {
+    padding: 0 8px;
+  }
+
+  .reader__nav-btn {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: var(--radius-full);
+    font-size: 0; /* Hide text "Prev" / "Next" */
+  }
+
+  .reader__nav-btn svg {
+    margin: 0;
+    width: 20px;
+    height: 20px;
+  }
 }
